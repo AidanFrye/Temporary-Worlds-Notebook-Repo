@@ -1,0 +1,316 @@
+FUNCTION LIBRARY 
+
+--------------Universal Functions--------------
+
+void resetMotorEncoders()
+{
+  DriveBase.resetRotation()
+  Error = 1;
+  Integral = 0;
+  Power = 0;
+}
+
+void TeamNameArt(){  
+  Brain.Screen.setPenColor(cyan);
+  Brain.Screen.setPenWidth(13);
+  Brain.Screen.setFillColor(black);
+  Brain.Screen.drawLine(200, 40, 200, 200);
+  Brain.Screen.drawLine(200, 40, 260, 40);
+  Brain.Screen.drawLine(255, 40, 280, 60);
+  Brain.Screen.drawLine(200, 200, 260, 200);
+  Brain.Screen.drawLine(255, 200, 280, 180);
+  Brain.Screen.drawLine(280, 180, 280, 150);
+  Brain.Screen.drawLine(280, 60, 280, 90);
+  Brain.Screen.drawLine(280, 90, 250, 120);
+  Brain.Screen.drawLine(250, 120, 280, 150);
+  //^^B
+  Brain.Screen.setPenWidth(5);
+  Brain.Screen.drawRectangle(40, 90, 20, 20);
+  Brain.Screen.drawLine(63, 90, 63, 150);
+  //^^9
+  Brain.Screen.drawLine(160, 90, 160, 150);
+  Brain.Screen.drawLine(160, 115, 135, 115);
+  Brain.Screen.drawLine(135, 115, 135, 90);
+  //^^4
+
+  Brain.Screen.drawLine(340, 90, 340, 150);
+  Brain.Screen.drawLine(340, 115, 315, 115);
+  Brain.Screen.drawLine(315, 115, 315, 90);
+
+  Brain.Screen.drawLine(420, 90, 450, 90);
+  Brain.Screen.drawLine(450, 90, 420, 150);
+}
+
+
+void PIDForward(float inches) //Coded in Inches
+{
+
+  float kP = 160;
+  float kD = 0.5;
+  float error = 2;
+  float prevError = 0;
+  float pwr = 0;
+  float derivative = 0;
+
+  DriveBase.resetRotation();
+  while (0.4 < error || error < -0.2){
+  error = inches - (LeftTop.position(turns)* 10.2101761242);
+  derivative = error - prevError;
+  prevError = error; 
+
+  pwr = (error / 10.2101761242) * kP + derivative * kD;
+  DriveBase.spin(fwd, pwr, rpm);
+  wait(15, msec);
+
+  }
+  DriveBase.stop(hold);
+}
+
+void turnRight(float degs)
+{
+  DriveBase.resetPosition();
+  while(currValue > degs + 0.05 || currValue < degs - 0.05)
+  {
+  Brain.Screen.printAt(30, 90, "Inertial Heading: %f",Inertial.heading());
+  Brain.Screen.printAt(30, 20, "Error: %f", error);
+  Brain.Screen.printAt(30, 50, "Power: %f", Power);
+
+  Power = error * kP + error * turnKI; 
+  currValue = LeftTop.position(turns);
+  if(Power < 42)
+  {
+    Power = 42;
+  }
+  if(Power > 115){
+  
+    Power = 115;
+  }
+  error = degs - currValue;
+  LeftSide.spin(fwd, Power, rpm);
+  RightSide.spin(fwd, -Power, rpm);
+  }
+  DriveBase.stop(hold);
+  resetMotorEncoder();
+  DriveBase.resetPosition();
+  degs = 0;
+}
+
+void turnLeft(float degs)
+{
+  DriveBase.resetPosition();
+  while(currValue > degs + 0.05 || currValue < degs - 0.05)
+  {
+  Brain.Screen.printAt(30, 90, "Inertial Heading: %f",Inertial.heading());
+  Brain.Screen.printAt(30, 20, "Error: %f", error);
+  Brain.Screen.printAt(30, 50, "Power: %f", Power);
+
+  Power = error * kP + error * turnKI; 
+  currValue = RightTop.position(turns);
+  if(Power < 42)
+  {
+    Power = 42;
+  }
+  if(Power > 120)
+  {
+    Power = 120;
+  }
+  error = degs - currValue;
+  LeftSide.spin(fwd, -Power, rpm);
+  RightSide.spin(fwd, Power, rpm);
+  }
+  DriveBase.stop(hold);
+  resetMotorEncoder();
+  DriveBase.resetPosition();
+  degs = 0;
+  currValue = 0;
+}
+
+------------------Game Specific Functions ------------------------------------
+
+____-TOWER TAKEOVER-_________________________________________________________________________
+
+void AutonSelectorArt(){
+ Brain.Screen.setFillColor(blue);
+ Brain.Screen.setPenColor(green);
+ Brain.Screen.setPenWidth(4);
+ Brain.Screen.drawRectangle(20, 20, 170, 60);
+ Brain.Screen.drawRectangle(20, 160, 170, 60);
+ Brain.Screen.setFillColor(red);
+ Brain.Screen.setPenColor(orange);
+ Brain.Screen.drawRectangle(290, 20, 170, 60);
+ Brain.Screen.drawRectangle(290, 160, 170, 60);
+ Brain.Screen.setPenColor(black);
+ Brain.Screen.setFillColor(blue);
+ Brain.Screen.printAt(35, 58, "Protected Zone");
+ Brain.Screen.printAt(27, 197, "Unprotected Zone");
+ Brain.Screen.setFillColor(red);
+ Brain.Screen.printAt(305, 58, "Protected Zone");
+ Brain.Screen.printAt(297, 197, "Unprotected Zone");
+}
+
+void SelectAuton(){
+ while(AutonomousMode == 0){
+    if(Brain.Screen.xPosition() > 20 && Brain.Screen.xPosition() < 170)
+    {
+      if(Brain.Screen.yPosition() > 20 && Brain.Screen.yPosition() < 80){
+      AutonomousMode = 1;
+      Brain.Screen.clearScreen();
+      Brain.Screen.print("Blue protected zone autonomous selected.");
+      }
+
+      if(Brain.Screen.yPosition() > 160 && Brain.Screen.yPosition() < 220){
+      AutonomousMode = 2;
+      Brain.Screen.clearScreen();
+      Brain.Screen.print("Blue unprotected zone autonomous selected.");
+      }
+    }
+if(Brain.Screen.xPosition() > 290 && Brain.Screen.xPosition() < 350)
+    {
+      if(Brain.Screen.yPosition() > 20 && Brain.Screen.yPosition() < 80){
+      AutonomousMode = 3;
+      Brain.Screen.clearScreen();
+      Brain.Screen.print("Red protected zone autonomous selected.");
+      }
+
+      if(Brain.Screen.yPosition() > 160 && Brain.Screen.yPosition() < 220){
+      AutonomousMode = 4;
+      Brain.Screen.clearScreen();
+      Brain.Screen.print("Red unprotected zone autonomous selected.");
+      }
+    }
+  }
+}
+
+void LiftArm(float degs)
+{
+ TrayTilter.spin(fwd, 50, rpm);
+ wait(1000, msec);
+ TrayTilter.stop(hold);
+ ArmMotor.spin(fwd, 70, rpm);
+ wait(degs, msec);
+ ArmMotor.stop(hold);
+}
+
+void LowerArm(float degs)
+{
+ ArmMotor.spin(fwd, -70, rpm);
+ wait(degs, msec);
+ ArmMotor.stop(hold);
+ TrayTilter.spin(fwd, -50, rpm);
+ wait(1000, msec);
+ TrayTilter.stop(hold);
+}
+
+void LiftTray(float degs)
+{
+TrayTilter.spin(fwd, 50, rpm);
+ wait(degs, msec);
+ TrayTilter.stop(hold);
+
+}
+
+void StartIntakes(){
+  LeftIntake.spin(fwd, -200, rpm);
+  RightIntake.spin(fwd, 200, rpm);
+
+}
+
+void StartOuttakes(){
+  LeftIntake.spin(fwd, 100, rpm);
+  RightIntake.spin(fwd, -100, rpm);
+
+}
+
+void StopIntakes(){
+  LeftIntake.stop(hold);
+  RightIntake.stop(hold);
+
+}
+
+________-Change Up-_____________________________________________________________________________
+
+void indexRed()
+{
+  OpticalSensor.setLightPower(100, pct);
+  OpticalSensorTop.setLightPower(100, pct);
+  if (ballOverSensor == 0)
+  {
+    if(OpticalSensor.hue() > 0 && OpticalSensor.hue() < 40){
+    currRedBalls = currRedBalls + 1;
+    ballOverSensor = 1;
+    Brain.Screen.setPenColor(red);
+    }
+  }
+  else if (ballOverSensor == 1 && OpticalSensor.hue() > 42)
+  {
+    ballOverSensor = 0;
+  } 
+  if(ballOverSensorTop == 0){
+    if (OpticalSensorTop.hue() > 0 && OpticalSensorTop.hue() < 40)
+    {
+      currRedBalls = currRedBalls - 1;
+      ballOverSensorTop = 1;
+      if (currRedBalls < 0)
+      {
+        currRedBalls = 0;
+      }
+      Brain.Screen.setPenColor(white);
+      }
+  }
+  else if (ballOverSensorTop == 1 && OpticalSensorTop.hue() > 42)
+  {
+    ballOverSensorTop = 0;
+  }
+
+}
+
+void indexBlue(){
+  OpticalSensor.setLightPower(100, pct);
+  OpticalSensorTop.setLightPower(75, pct);
+if (ballOverSensorBlue == 0)
+  {
+    if(OpticalSensor.hue() > 95 && OpticalSensor.hue() < 255){
+    currBlueBalls = currBlueBalls + 1;
+    ballOverSensorBlue = 1;
+    Brain.Screen.setPenColor(blue);
+    }
+  }
+  else if (ballOverSensorBlue == 1 && OpticalSensor.hue() < 70)
+  {
+    ballOverSensorBlue = 0;
+  } 
+  if(ballOverSensorTopBlue == 0){
+    if (OpticalSensorTop.hue() > 50 && OpticalSensorTop.isNearObject())
+    {
+      currBlueBalls = currBlueBalls - 1;
+      ballOverSensorTopBlue = 1;
+      if (currBlueBalls < 0)
+      {
+        currBlueBalls = 0;
+      }
+      Brain.Screen.setPenColor(white);
+    }
+  }
+  else if (ballOverSensorTopBlue == 1 && OpticalSensorTop.hue() < 60 && OpticalSensorTop.isNearObject() == false)
+  {
+    ballOverSensorTopBlue = 0;
+  }
+  Brain.Screen.clearScreen();
+  Brain.Screen.printAt(30, 160, "CurrRedBalls : %f", currRedBalls);
+  Brain.Screen.printAt(30, 180, "CurrBlueBalls : %f", currBlueBalls);
+  Brain.Screen.printAt(30, 200, "BallOnSensorValue : %f", ballOverSensor);
+  Brain.Screen.printAt(30, 220, "BallOnSensorBlueValue : %f", ballOverSensorBlue);
+}
+
+void spinUntilRedBlue(float numRed, float numBlue)
+{
+  while(currRedBalls != numRed || currBlueBalls != numBlue){
+    LeftBallIntake.spin(fwd, 300, rpm);
+    RightBallIntake.spin(fwd, 300, rpm);
+    BottomShooter.spin(fwd, 200, rpm);
+    indexRed();
+    indexBlue();
+  }
+  Intakes.stop(hold);
+  Shooters.stop(hold);
+}
