@@ -17,7 +17,7 @@
 #include "vex.h"
 #include "functionsAndMotors.h"
 using namespace vex;
-float autonomousMode = 4; //1 is left, 2 is right, from outside of field from color position, 3 is skills, 4 is experimental
+float autonomousMode = 4; //1 is left, 2 is right, from outside of field from color position, 3 is skills, 4 is home row
 float colorMode = 1; //1 is blue, 2 is red
 
 int main() {
@@ -87,9 +87,7 @@ int main() {
   DriveBase.stop(hold);
   Intakes.stop(hold);
   Shooters.stop(hold);
-
   }
-    }
     if(colorMode == 2)
     {
   DriveBase.spin(fwd, -80, rpm);
@@ -149,6 +147,7 @@ int main() {
   Shooters.stop(hold);
   DriveBase.stop(coast);
 }
+  }
 if(autonomousMode == 2){
   if(colorMode == 1){
   Inertial.calibrate();
@@ -496,21 +495,36 @@ if(autonomousMode == 2){
     DriveBase.spin(fwd, 20, rpm);
     wait(0.5, sec);
     DriveBase.resetRotation();
-    PIDForward(24.5);
+    if(colorMode==1)
+    {
+    PIDForward(25.5);
+    }
+    else if (colorMode == 2)
+    {
+      PIDForward(26.6);
+    }
     wait(0.2, sec);
     DriveBase.resetRotation();
     turnLeft(0.55);
     wait(0.2, sec);
     Intakes.spin(fwd, 400, rpm);
     Shooters.spin(fwd, 600, rpm);
-    PIDForward(13.2);
-    DriveBase.spin(fwd, 5, rpm);
+    if(colorMode == 1)
+    {
+      PIDForward(13.1);
+    }
+    else if (colorMode == 2)
+    {
+      PIDForward(12.9);
+    }
+    DriveBase.spin(fwd, 7, rpm);
     waitUntil(OpticalSensorTop.isNearObject()==true);
     waitUntil(OpticalSensor.isNearObject()==true);
     DriveBase.stop(hold);
-    wait(0.2, sec);
+    wait(0.1, sec);
     waitUntil(OpticalSensorTop.isNearObject()==true);
     wait(0.1, sec);
+    Intakes.spin(fwd, -200, rpm);
     TopShooter.stop(hold);
     wait(0.2, sec);
     Intakes.stop(hold);
@@ -523,7 +537,14 @@ if(autonomousMode == 2){
     wait(0.2, sec);
     Shooters.spin(fwd, -600, rpm);
     Intakes.spin(fwd, -200, rpm);
+    if(colorMode == 1)
+    {
     turnLeft(0.79);
+    }
+    else if (colorMode == 2)
+    {
+      turnLeft(0.77);
+    }
     Shooters.stop(hold);
     Intakes.stop(hold);
     wait(0.2, sec);
@@ -539,7 +560,14 @@ if(autonomousMode == 2){
     DriveBase.stop(hold);
     wait(0.1, sec);
     DriveBase.stop(coast);
+    if(colorMode == 1)
+    {
     waitUntil(OpticalSensor.isNearObject()==true && OpticalSensor.hue() > 0 && OpticalSensor.hue() < 40);
+    }
+    else if(colorMode == 2)
+    {
+    waitUntil(OpticalSensor.isNearObject()==true && OpticalSensor.hue() > 85 && OpticalSensor.hue() < 210);
+    }
     Intakes.spin(fwd, -100, rpm);
     BottomShooter.stop(hold);
     DriveBase.spin(fwd, -50, rpm);
