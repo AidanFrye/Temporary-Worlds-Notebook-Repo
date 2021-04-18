@@ -18,7 +18,7 @@
 #include "functionsAndMotors.h"
 using namespace vex;
 float autonomousMode = 4; //1 is left, 2 is right, from outside of field from color position, 3 is skills, 4 is home row
-float colorMode = 1; //1 is blue, 2 is red
+float colorMode = 1; //1 is red, 2 is blue, 
 
 int main() {
   
@@ -492,87 +492,53 @@ if(autonomousMode == 2){
   {
     indexBlue();
     indexRed();
-    DriveBase.spin(fwd, 20, rpm);
-    wait(0.5, sec);
-    DriveBase.resetRotation();
-    if(colorMode==1)
-    {
-    PIDForward(25.5);
-    }
-    else if (colorMode == 2)
-    {
-      PIDForward(26.6);
-    }
-    wait(0.2, sec);
-    DriveBase.resetRotation();
-    turnLeft(0.55);
-    wait(0.2, sec);
-    Intakes.spin(fwd, 400, rpm);
-    Shooters.spin(fwd, 600, rpm);
-    if(colorMode == 1)
-    {
-      PIDForward(13.1);
-    }
-    else if (colorMode == 2)
-    {
-      PIDForward(12.9);
-    }
-    DriveBase.spin(fwd, 7, rpm);
-    waitUntil(OpticalSensorTop.isNearObject()==true);
-    waitUntil(OpticalSensor.isNearObject()==true);
-    DriveBase.stop(hold);
-    wait(0.1, sec);
-    waitUntil(OpticalSensorTop.isNearObject()==true);
-    wait(0.1, sec);
-    Intakes.spin(fwd, -200, rpm);
-    TopShooter.stop(hold);
-    wait(0.2, sec);
-    Intakes.stop(hold);
-    Shooters.stop(hold);
-    DriveBase.resetRotation();
-    DriveBase.spin(fwd, -80, rpm);
-    waitUntil(LeftTop.rotation(turns) < -1.1);
-    DriveBase.stop(hold);
-    DriveBase.resetRotation();
-    wait(0.2, sec);
-    Shooters.spin(fwd, -600, rpm);
-    Intakes.spin(fwd, -200, rpm);
-    if(colorMode == 1)
-    {
-    turnLeft(0.79);
-    }
-    else if (colorMode == 2)
-    {
-      turnLeft(0.77);
-    }
-    Shooters.stop(hold);
-    Intakes.stop(hold);
-    wait(0.2, sec);
-    DriveBase.resetRotation();
-    PIDForward(64.5);
-    DriveBase.resetRotation();
-    turnRight(0.2);
-    DriveBase.spin(fwd, 100, rpm);
-    Intakes.spin(fwd, 400, rpm);
     Shooters.spin(fwd, 600, rpm);
     waitUntil(OpticalSensorTop.isNearObject()==true);
-    waitUntil(OpticalSensor.isNearObject()==true);
+    wait(0.3, sec);
+    Shooters.stop(hold);
+    DriveBase.spin(fwd, -130, rpm);
+    waitUntil(LeftTop.rotation(turns) < -2.95);
     DriveBase.stop(hold);
-    wait(0.1, sec);
-    DriveBase.stop(coast);
-    if(colorMode == 1)
-    {
-    waitUntil(OpticalSensor.isNearObject()==true && OpticalSensor.hue() > 0 && OpticalSensor.hue() < 40);
-    }
-    else if(colorMode == 2)
-    {
-    waitUntil(OpticalSensor.isNearObject()==true && OpticalSensor.hue() > 85 && OpticalSensor.hue() < 210);
-    }
-    Intakes.spin(fwd, -100, rpm);
-    BottomShooter.stop(hold);
-    DriveBase.spin(fwd, -50, rpm);
-    wait(1, sec);
+    wait(0.3, sec);
+    DriveBase.resetRotation();
+    turnRight(0.645);
+    wait(0.35, sec);
+    DriveBase.resetRotation();
+    Intakes.spin(fwd, 600, rpm); 
+    Shooters.spin(fwd, 600, rpm);
+    PIDForward(12);
+    DriveBase.spin(fwd, 40, rpm);
+    Intakes.stop(hold);
+    waitUntil(OpticalSensorTop.isNearObject()==true);
+    wait(0.3, sec);
+    Intakes.stop(hold);
+    wait(0.2, sec);
     DriveBase.stop(hold);
-    TopShooter.stop(hold);
-  };
+    Shooters.stop(hold);
+    DriveBase.resetRotation();
+    DriveBase.spin(fwd, -120, rpm);
+    waitUntil(LeftTop.rotation(turns) < -1);
+    DriveBase.stop(hold);
+    wait(0.4, sec);
+    DriveBase.resetRotation();
+    turnLeft(0.85);
+    wait(0.3, sec);
+    PIDForward(58);
+    wait(0.6, sec);
+    Intakes.spin(fwd, 300, rpm);
+    BottomShooter.spin(fwd, 600, rpm);
+    DriveBase.resetRotation();
+    turnRight(0.34);
+    wait(0.3, sec);
+    DriveBase.spin(fwd, 110, rpm);
+    Shooters.spin(fwd, 300, rpm);
+    waitUntil(OpticalSensorTop.isNearObject() == true);
+    Intakes.stop(hold);
+    wait(0.2, sec);
+    Shooters.stop(hold);
+    DriveBase.resetPosition();
+    DriveBase.spin(fwd, -110, rpm);
+    waitUntil(LeftTop.rotation(turns) < -2);
+    DriveBase.stop(hold);
+  }
 }
