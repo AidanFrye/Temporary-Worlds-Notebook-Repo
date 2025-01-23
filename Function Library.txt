@@ -44,26 +44,25 @@ void TeamNameArt(){
 
 void PIDForward(float inches) //Coded in Inches
 {
-
   float kP = 160;
   float kD = 0.5;
   float error = 2;
   float prevError = 0;
   float pwr = 0;
   float derivative = 0;
+  float circum = 10.2101761242; //circumference of wheel in inches (could probably round but this works too)
 
   DriveBase.resetRotation();
-  while (0.4 < error || error < -0.2){
-  error = inches - (LeftTop.position(turns)* 10.2101761242);
-  derivative = error - prevError;
+  while (0.4 < error || error < -0.2) {  //sets the margin of error, in this case from 0.4 inches before to 0.2 inches past the target. 
+  error = inches - (LeftTop.position(turns) * circum); //sets error (distance left to travel) to inches (target distance) minus distance already traveled (turns * circumference)
+  derivative = error - prevError; // find the change in error to compensate for sudden changes in speed (probably due to hitting something)
   prevError = error; 
 
-  pwr = (error / 10.2101761242) * kP + derivative * kD;
+  pwr = (error / circum) * kP + derivative * kD;
   DriveBase.spin(fwd, pwr, rpm);
   wait(15, msec);
-
   }
-  DriveBase.stop(hold);
+  DriveBase.stop(hold); //once we've made it within our margin of error for our distance, stop
 }
 
 void turnRight(float degs)
